@@ -15,9 +15,9 @@ A **Start Gym** visa facilitar a criação de treinos e dieta através de dispos
 
 ## Documentação
 
-O projeto conta com uma [documentação completa]() com requisitos, plano de negócio e detalhamento do objetivo do projeto.
+O projeto conta com uma [documentação completa](https://docs.google.com/document/d/1KjKLZWC1Fr-DxPJtdWs90OwTQ-gvfMRgz-BPZWcLwno/edit?usp=sharing) com requisitos, plano de negócio e detalhamento do objetivo do projeto.
 
-- [Back-End]() focado em API [Nest JS](https://nestjs.com/)
+- [Back-End](https://github.com/RhuanLino/gym-back) focado em API [Nest JS](https://nestjs.com/)
 - [Front-End](https://github.com/RhuanLino/gym_app.git) focado e estruturado em [Flutter](https://flutter.dev/)
 ### Stack utilizada
 
