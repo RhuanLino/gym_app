@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (email == "teste@email.com" && password == "123456") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         textStyle: const TextStyle(fontSize: 16),
                       ),
-                      child: Text('Login'),
+                      child: const Text('Login'),
                     ),
               const SizedBox(height: 20),
 

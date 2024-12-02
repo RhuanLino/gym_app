@@ -215,7 +215,7 @@ class TrainingScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
                   ),
-                  child: Text('Ver Treino'),
+                  child: const Text('Ver Treino'),
                 ),
               ],
             ),

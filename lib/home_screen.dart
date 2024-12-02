@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       textStyle: const TextStyle(fontSize: 16),
                     ),
-                    child: Text('Ver Treinos'),
+                    child: const Text('Ver Treinos'),
                   ),
                 ),
               ),
@@ -97,13 +97,13 @@ class HomeScreen extends StatelessWidget {
                     context,
                     'Planos de Dieta',
                     Icons.restaurant_menu,
-                    DietScreen(),
+                    const DietScreen(),
                   ),
                   _buildOptionCard(
                     context,
                     'Recomendações',
                     Icons.local_dining,
-                    DietScreen(),
+                    const DietScreen(),
                   ),
                 ],
               ),
@@ -122,13 +122,13 @@ class HomeScreen extends StatelessWidget {
                     context,
                     'Meu Perfil',
                     Icons.person,
-                    UserScreen(),
+                    const UserScreen(),
                   ),
                   _buildOptionCard(
                     context,
                     'Histórico',
                     Icons.history,
-                    UserScreen(),
+                    const UserScreen(),
                   ),
                 ],
               ),
@@ -145,12 +145,12 @@ class HomeScreen extends StatelessWidget {
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           } else if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DietScreen()),
+              MaterialPageRoute(builder: (context) => const DietScreen()),
             );
           } else if (index == 2) {
             Navigator.push(
@@ -165,7 +165,7 @@ class HomeScreen extends StatelessWidget {
           } else if (index == 4) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => UserScreen()),
+              MaterialPageRoute(builder: (context) => const UserScreen()),
             );
           }
         },
