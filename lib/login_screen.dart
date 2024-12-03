@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
 import 'home_screen.dart';
+import './services/requests.dart'; // Importando o arquivo de requisições
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  void _login() {
+  void _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
@@ -29,22 +30,25 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
+    // Chamando a função de login
+    final response = await login(email, password);
 
-      if (email == "teste@email.com" && password == "123456") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Email ou senha incorretos.')),
-        );
-      }
+    setState(() {
+      _isLoading = false;
     });
+
+    if (response.containsKey('error')) {
+      // Se houver erro no login
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['error'])),
+      );
+    } else {
+      // Sucesso no login, redirecionando para a tela principal
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
   }
 
   void _navigateToSignup() {

@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
+  @override
+  _SignupScreenState createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
-  SignupScreen({super.key});
+  // Lista de tipos de conta
+  final List<String> accountTypes = ['Selecione um tipo', 'Aluno', 'Personal', 'Nutricionista'];
+  // Valor selecionado para tipo de conta
+  String? selectedAccountType = 'Selecione um tipo';
 
   void _signup(BuildContext context) {
+    String nome = _nomeController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (nome.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, preencha todos os campos')),
       );
@@ -46,7 +57,8 @@ class SignupScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
               const Text(
@@ -63,6 +75,38 @@ class SignupScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
               const SizedBox(height: 40),
+
+              // Campo de Nome
+              TextField(
+                controller: _nomeController,
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  hintText: 'Digite seu nome',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  prefixIcon: const Icon(Icons.person, color: Colors.redAccent),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Campo de Tipo (Dropdown)
+              DropdownButton<String>(
+                value: selectedAccountType,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedAccountType = newValue;
+                  });
+                },
+                items: accountTypes.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                isExpanded: true, // Faz o dropdown ocupar toda a largura
+              ),
+              const SizedBox(height: 20),
 
               // Campo de Email
               TextField(
