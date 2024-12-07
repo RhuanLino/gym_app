@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/login_screen.dart';
+import './services/requests.dart';
 
 class UserScreen extends StatelessWidget {
   const UserScreen({super.key});
 
   void _logout(BuildContext context) {
     // Função de sair
-    Navigator.pop(context); // Ajuste para sair ou voltar para tela de login
+    logout();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   void _navigateToPersonalData(BuildContext context) {
