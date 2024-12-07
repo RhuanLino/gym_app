@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/services/requests.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -14,28 +15,37 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   // Lista de tipos de conta
-  final List<String> accountTypes = ['Selecione um tipo', 'Aluno', 'Personal', 'Nutricionista'];
+  final List<String> tipoConta = ['Selecione um tipo', 'Aluno', 'Personal', 'Nutricionista'];
   // Valor selecionado para tipo de conta
-  String? selectedAccountType = 'Selecione um tipo';
+  String? selectTipoConta = 'Selecione um tipo';
 
-  void _signup(BuildContext context) {
+  void _cadastro(BuildContext context) async {
     String nome = _nomeController.text;
     String email = _emailController.text;
-    String password = _passwordController.text;
+    String senha = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
-    if (nome.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (nome.isEmpty || email.isEmpty || senha.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, preencha todos os campos')),
       );
       return;
     }
 
-    if (password != confirmPassword) {
+    if (senha != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('As senhas não coincidem')),
       );
       return;
+    }
+
+    final response = await cadastro(nome, selectTipoConta!, email, confirmPassword);
+
+    if (response.containsKey('error')) {
+      // Se houver erro no login
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['error'])),
+      );
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -92,13 +102,13 @@ class _SignupScreenState extends State<SignupScreen> {
               
               // Campo de Tipo (Dropdown)
               DropdownButton<String>(
-                value: selectedAccountType,
+                value: selectTipoConta,
                 onChanged: (String? newValue) {
                   setState(() {
-                    selectedAccountType = newValue;
+                    selectTipoConta = newValue;
                   });
                 },
-                items: accountTypes.map<DropdownMenuItem<String>>((String value) {
+                items: tipoConta.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -154,7 +164,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Botão de Cadastro
               ElevatedButton(
-                onPressed: () => _signup(context),
+                onPressed: () => _cadastro(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 120, vertical: 15),
