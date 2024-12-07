@@ -48,3 +48,31 @@ Future<void> logout() async {
   // Remover o token do armazenamento seguro no logout
   await storage.delete(key: 'token');
 }
+
+Future <Map<String, dynamic>> cadastro(String nome, String tipo, String email, String senha) async {
+  final registerUrl = Uri.parse('${apiUrl}user/register');
+  final headers = {'Content-Type': 'application/json'};
+
+  final body = json.encode({
+    'nome': nome,
+    'tipo': tipo,
+    'email': email,
+    'senha': senha
+  });
+
+  try {
+    final response = await http.post(registerUrl, headers: headers, body: body);
+
+    if (response.statusCode == 201) {
+      final responseData = json.decode(response.body);
+      return responseData;
+    } else if (response.statusCode == 400) {
+      final errorResponse = json.decode(response.body);
+      return {'error': errorResponse['message'] ?? 'Erro no cadastro'};
+    } else {
+      return {'error': 'Erro ao realizar o cadastro'};
+    }
+  } catch (e) {
+    return {'error': 'Falha ao conectar com a API'};
+  }
+}
