@@ -19,9 +19,10 @@ Future<Map<String, dynamic>> login(String email, String password) async {
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      if (responseData['token'] != null) {
-        // Salvar o token no armazenamento seguro
-        await storage.write(key: 'token', value: responseData['token']);
+      
+      final token = responseData['access_token'];
+      if (token != null) {
+        await storage.write(key: 'token', value: token);
       }
       return responseData;
     } else {
@@ -30,18 +31,6 @@ Future<Map<String, dynamic>> login(String email, String password) async {
   } catch (e) {
     return {'error': 'Falha ao conectar com a API'};
   }
-}
-
-Future<http.Response> makeAuthenticatedRequest(
-    String endpoint, Map<String, dynamic> body) async {
-  final token = await storage.read(key: 'token'); // Recuperar o token
-  final headers = {
-    'Content-Type': 'application/json',
-    if (token != null) 'Authorization': 'Bearer $token',
-  };
-
-  final apiUrl = Uri.parse('http://localhost:5000/$endpoint');
-  return await http.post(apiUrl, headers: headers, body: json.encode(body));
 }
 
 Future<void> logout() async {
@@ -76,3 +65,31 @@ Future <Map<String, dynamic>> cadastro(String nome, String tipo, String email, S
     return {'error': 'Falha ao conectar com a API'};
   }
 }
+
+Future<List<Map<String, dynamic>>> getDieta() async {
+  final getDietaUrl = Uri.parse('${apiUrl}user/buscardieta');
+
+  try {
+    final token = await storage.read(key: 'token');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(getDietaUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar dietas: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar dietas: $e');
+    return [];
+  }
+}
+

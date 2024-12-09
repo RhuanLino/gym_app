@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class DietDetailScreen extends StatelessWidget {
   final String title;
-  final Map<String, dynamic> details;
+  final List<dynamic> alimentos; // Recebendo a lista de alimentos da API
 
-  const DietDetailScreen({super.key, required this.title, required this.details});
+  const DietDetailScreen({
+    super.key,
+    required this.title,
+    required this.alimentos,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +22,13 @@ class DietDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Descrição
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.redAccent.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                details['Descrição'],
-                style: const TextStyle(fontSize: 16, color: Colors.redAccent),
+            // Cabeçalho
+            Text(
+              'Detalhes da Refeição',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
               ),
             ),
             const SizedBox(height: 20),
@@ -41,49 +42,28 @@ class DietDetailScreen extends StatelessWidget {
                 color: Colors.redAccent,
               ),
             ),
-            ...details['Itens'].map<Widget>((item) => ListTile(
-                  leading: const Icon(Icons.check_circle, color: Colors.redAccent),
-                  title: Text(
-                    item,
-                    style: const TextStyle(fontSize: 16),
+            const SizedBox(height: 10),
+            ...alimentos.map<Widget>((alimento) => Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                )),
-            const SizedBox(height: 20),
-
-            // Informações Nutricionais
-            const Text(
-              'Informações Nutricionais',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
-              ),
-            ),
-            ...details['Informações Nutricionais']
-                .map<Widget>((info) => ListTile(
-                      leading:
-                          const Icon(Icons.info_outline, color: Colors.redAccent),
-                      title: Text(
-                        info,
-                        style: const TextStyle(fontSize: 16),
+                  elevation: 3,
+                  child: ListTile(
+                    title: Text(
+                      alimento['alimento'] ?? 'Alimento não especificado',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                    )),
-            const SizedBox(height: 20),
-
-            // Substituições
-            const Text(
-              'Sugestões de Substituição',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
-              ),
-            ),
-            ...details['Substituições'].map<Widget>((sub) => ListTile(
-                  leading: const Icon(Icons.swap_horiz, color: Colors.redAccent),
-                  title: Text(
-                    sub,
-                    style: const TextStyle(fontSize: 16),
+                    ),
+                    subtitle: Text(
+                      'Quantidade: ${alimento['quantidade'] ?? 0}g',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 )),
           ],
