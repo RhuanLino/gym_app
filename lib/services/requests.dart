@@ -93,3 +93,25 @@ Future<List<Map<String, dynamic>>> getDieta() async {
   }
 }
 
+Future<List<Map<String, dynamic>>> getAlimentos() async {
+  final getAlimentosUrl = Uri.parse('${apiUrl}alimentos/buscaralimentos');
+  final headers = {'Content-Type': 'application/json'};
+
+  try {
+    final response = await http.get(getAlimentosUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar alimentos: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar alimentos: $e');
+    return [];
+  }
+}
+

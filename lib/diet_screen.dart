@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_app/services/requests.dart';
 import 'diet_detail_screen.dart';
