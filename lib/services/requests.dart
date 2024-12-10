@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gym_app/training_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -111,6 +112,33 @@ Future<List<Map<String, dynamic>>> getAlimentos() async {
   } catch (e) {
     // Lidar com erros de exceção
     print('Erro ao buscar alimentos: $e');
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> getTreinos(TrainingScreen trainingScreen) async {
+  final getTreinosUrl = Uri.parse('${apiUrl}user/buscartreinos');
+
+  try {
+    final token = await storage.read(key: 'token');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(getTreinosUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar treinos: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar treinos: $e');
     return [];
   }
 }
