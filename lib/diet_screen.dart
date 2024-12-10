@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gym_app/services/requests.dart';
 import 'diet_detail_screen.dart';
 
@@ -81,7 +80,7 @@ class _DietScreenState extends State<DietScreen> {
                     _getIconRefeicao(dieta['refeicao']),
                     DietDetailScreen(
                       title: dieta['refeicao'] ?? 'Dieta',
-                      alimentos: dieta['alimentos'] ?? [],
+                      details: dieta['alimentos'] ?? [],
                     ),
                   );
                 },

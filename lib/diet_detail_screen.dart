@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class DietDetailScreen extends StatelessWidget {
   final String title;
-  final List<dynamic> alimentos; // Recebendo a lista de alimentos da API
+  final List<dynamic> details; // Recebendo a lista de alimentos da API
 
   const DietDetailScreen({
     super.key,
     required this.title,
-    required this.alimentos,
+    required this.details,
   });
 
   @override
@@ -22,17 +22,6 @@ class DietDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Cabeçalho
-            Text(
-              'Detalhes da Refeição',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Itens da refeição
             const Text(
               'Itens da Refeição',
@@ -43,29 +32,57 @@ class DietDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            ...alimentos.map<Widget>((alimento) => Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 3,
-                  child: ListTile(
-                    title: Text(
-                      alimento['alimento'] ?? 'Alimento não especificado',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Quantidade: ${alimento['quantidade'] ?? 0}g',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                )),
+            ...details.map<Widget>((item) {
+              return ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.redAccent),
+                title: Text(
+                  item['alimento'] ?? 'Sem informação', // Exibe o nome do alimento
+                  style: const TextStyle(fontSize: 16),
+                ),
+                subtitle: Text(
+                  'Quantidade: ${item['quantidade'] ?? '0'}g', // Exibe a quantidade
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+              );
+            }).toList(),
+            const SizedBox(height: 20),
+
+            // Informações Nutricionais (Exemplo para outro tipo de dado)
+            const Text(
+              'Informações Nutricionais',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Caso precise exibir outras informações, adicione a lógica aqui
+            ...details.map<Widget>((item) {
+              return ListTile(
+                leading: const Icon(Icons.info_outline, color: Colors.redAccent),
+                title: Text(
+                  'Informações não especificadas para este item.',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
+            }).toList(),
+            const SizedBox(height: 20),
+
+            // Sugestões de Substituição (se houver)
+            const Text(
+              'Sugestões de Substituição',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Sem substituições disponíveis.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
           ],
         ),
       ),
