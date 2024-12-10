@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/services/requests.dart';
 import 'diet_detail_screen.dart';
 
-class DietScreen extends StatelessWidget {
+class DietScreen extends StatefulWidget {
   const DietScreen({super.key});
+
+  @override
+  _DietScreenState createState() => _DietScreenState();
+}
+
+class _DietScreenState extends State<DietScreen> {
+  late Future<List<Map<String, dynamic>>> _dietas;
+
+  IconData _getIconRefeicao(String? refeicao) {
+    switch (refeicao?.toLowerCase()) {
+      case 'café da manhã':
+        return Icons.breakfast_dining;
+      case 'lanche da manhã':
+        return Icons.coffee;
+      case 'almoço':
+        return Icons.lunch_dining;
+      case 'lanche da tarde':
+        return Icons.cookie;
+      case 'jantar':
+        return Icons.dinner_dining;
+      case 'ceia':
+        return Icons.bedtime;
+      default:
+        return Icons.fastfood;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _dietas = getDieta();
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -14,108 +47,49 @@ class DietScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Escolha sua refeição:',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.redAccent,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildDietCard(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _dietas,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Erro ao carregar as dietas.',
+                  style: TextStyle(color: Colors.redAccent, fontSize: 18),
+                ),
+              );
+            } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Nenhuma dieta encontrada.',
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+            } else if (snapshot.hasData) {
+              final dietas = snapshot.data!;
+              return ListView.builder(
+                itemCount: dietas.length,
+                itemBuilder: (context, index) {
+                  final dieta = dietas[index];
+                  return _buildDietCard(
                     context,
-                    'Café da Manhã',
-                    '08:00 - 09:30',
-                    Icons.breakfast_dining,
-                    const DietDetailScreen(
-                      title: 'Café da Manhã',
-                      details: {
-                        'Descrição':
-                            'Refeição para fornecer energia ao longo do dia.',
-                        'Itens': [
-                          '2 fatias de pão integral',
-                          '1 ovo cozido',
-                          '1 banana',
-                          '1 xícara de café sem açúcar'
-                        ],
-                        'Informações Nutricionais': [
-                          'Calorias: 250 kcal',
-                          'Proteínas: 10g',
-                          'Carboidratos: 30g',
-                          'Gorduras: 5g'
-                        ],
-                        'Substituições': [
-                          'Pão integral por tapioca',
-                          'Banana por maçã',
-                          'Café sem açúcar por chá verde'
-                        ],
-                      },
+                    dieta['refeicao'] ?? 'Dieta',
+                    dieta['horario'] ?? '',
+                    _getIconRefeicao(dieta['refeicao']),
+                    DietDetailScreen(
+                      title: dieta['refeicao'] ?? 'Dieta',
+                      details: dieta['alimentos'] ?? [],
                     ),
-                  ),
-                  _buildDietCard(
-                    context,
-                    'Lanche da Manhã',
-                    '10:00 - 11:00',
-                    Icons.coffee,
-                    const DietDetailScreen(
-                      title: 'Lanche da Manhã',
-                      details: {
-                        'Descrição': 'Refeição leve para manter a saciedade.',
-                        'Itens': ['1 maçã', '10 amêndoas', '1 iogurte natural'],
-                        'Informações Nutricionais': [
-                          'Calorias: 200 kcal',
-                          'Proteínas: 8g',
-                          'Carboidratos: 20g',
-                          'Gorduras: 10g'
-                        ],
-                        'Substituições': [
-                          'Maçã por pera',
-                          'Amêndoas por castanha de caju',
-                          'Iogurte natural por leite desnatado'
-                        ],
-                      },
-                    ),
-                  ),
-                  _buildDietCard(
-                    context,
-                    'Almoço',
-                    '12:00 - 13:30',
-                    Icons.lunch_dining,
-                    const DietDetailScreen(
-                      title: 'Almoço',
-                      details: {
-                        'Descrição': 'Refeição principal do dia.',
-                        'Itens': [
-                          '100g de peito de frango grelhado',
-                          '100g de arroz integral',
-                          '50g de feijão preto',
-                          'Salada verde (alface, tomate, cenoura)'
-                        ],
-                        'Informações Nutricionais': [
-                          'Calorias: 400 kcal',
-                          'Proteínas: 30g',
-                          'Carboidratos: 50g',
-                          'Gorduras: 8g'
-                        ],
-                        'Substituições': [
-                          'Frango grelhado por carne magra',
-                          'Arroz integral por quinoa',
-                          'Feijão por lentilha'
-                        ],
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                  );
+                },
+              );
+            } else {
+              return const Center(
+                child: Text('Algo deu errado.'),
+              );
+            }
+          },
         ),
       ),
     );

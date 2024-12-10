@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gym_app/training_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -19,9 +20,10 @@ Future<Map<String, dynamic>> login(String email, String password) async {
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      if (responseData['token'] != null) {
-        // Salvar o token no armazenamento seguro
-        await storage.write(key: 'token', value: responseData['token']);
+      
+      final token = responseData['access_token'];
+      if (token != null) {
+        await storage.write(key: 'token', value: token);
       }
       return responseData;
     } else {
@@ -30,18 +32,6 @@ Future<Map<String, dynamic>> login(String email, String password) async {
   } catch (e) {
     return {'error': 'Falha ao conectar com a API'};
   }
-}
-
-Future<http.Response> makeAuthenticatedRequest(
-    String endpoint, Map<String, dynamic> body) async {
-  final token = await storage.read(key: 'token'); // Recuperar o token
-  final headers = {
-    'Content-Type': 'application/json',
-    if (token != null) 'Authorization': 'Bearer $token',
-  };
-
-  final apiUrl = Uri.parse('http://localhost:5000/$endpoint');
-  return await http.post(apiUrl, headers: headers, body: json.encode(body));
 }
 
 Future<void> logout() async {
@@ -76,3 +66,80 @@ Future <Map<String, dynamic>> cadastro(String nome, String tipo, String email, S
     return {'error': 'Falha ao conectar com a API'};
   }
 }
+
+Future<List<Map<String, dynamic>>> getDieta() async {
+  final getDietaUrl = Uri.parse('${apiUrl}user/buscardieta');
+
+  try {
+    final token = await storage.read(key: 'token');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(getDietaUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar dietas: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar dietas: $e');
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> getAlimentos() async {
+  final getAlimentosUrl = Uri.parse('${apiUrl}alimentos/buscaralimentos');
+  final headers = {'Content-Type': 'application/json'};
+
+  try {
+    final response = await http.get(getAlimentosUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar alimentos: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar alimentos: $e');
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> getTreinos(TrainingScreen trainingScreen) async {
+  final getTreinosUrl = Uri.parse('${apiUrl}user/buscartreinos');
+
+  try {
+    final token = await storage.read(key: 'token');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(getTreinosUrl, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      // Lidar com erro de status não OK
+      print('Erro ao buscar treinos: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    // Lidar com erros de exceção
+    print('Erro ao buscar treinos: $e');
+    return [];
+  }
+}
+

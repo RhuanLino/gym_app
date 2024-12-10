@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class DietDetailScreen extends StatelessWidget {
   final String title;
-  final Map<String, dynamic> details;
+  final List<dynamic> details; // Recebendo a lista de alimentos da API
 
-  const DietDetailScreen({super.key, required this.title, required this.details});
+  const DietDetailScreen({
+    super.key,
+    required this.title,
+    required this.details,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,20 +22,6 @@ class DietDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Descrição
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.redAccent.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                details['Descrição'],
-                style: const TextStyle(fontSize: 16, color: Colors.redAccent),
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Itens da refeição
             const Text(
               'Itens da Refeição',
@@ -41,16 +31,23 @@ class DietDetailScreen extends StatelessWidget {
                 color: Colors.redAccent,
               ),
             ),
-            ...details['Itens'].map<Widget>((item) => ListTile(
-                  leading: const Icon(Icons.check_circle, color: Colors.redAccent),
-                  title: Text(
-                    item,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                )),
+            const SizedBox(height: 10),
+            ...details.map<Widget>((item) {
+              return ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.redAccent),
+                title: Text(
+                  item['alimento'] ?? 'Sem informação', // Exibe o nome do alimento
+                  style: const TextStyle(fontSize: 16),
+                ),
+                subtitle: Text(
+                  'Quantidade: ${item['quantidade'] ?? '0'}g', // Exibe a quantidade
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+              );
+            }).toList(),
             const SizedBox(height: 20),
 
-            // Informações Nutricionais
+            // Informações Nutricionais (Exemplo para outro tipo de dado)
             const Text(
               'Informações Nutricionais',
               style: TextStyle(
@@ -59,18 +56,20 @@ class DietDetailScreen extends StatelessWidget {
                 color: Colors.redAccent,
               ),
             ),
-            ...details['Informações Nutricionais']
-                .map<Widget>((info) => ListTile(
-                      leading:
-                          const Icon(Icons.info_outline, color: Colors.redAccent),
-                      title: Text(
-                        info,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    )),
+            const SizedBox(height: 10),
+            // Caso precise exibir outras informações, adicione a lógica aqui
+            ...details.map<Widget>((item) {
+              return ListTile(
+                leading: const Icon(Icons.info_outline, color: Colors.redAccent),
+                title: Text(
+                  'Informações não especificadas para este item.',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
+            }).toList(),
             const SizedBox(height: 20),
 
-            // Substituições
+            // Sugestões de Substituição (se houver)
             const Text(
               'Sugestões de Substituição',
               style: TextStyle(
@@ -79,13 +78,11 @@ class DietDetailScreen extends StatelessWidget {
                 color: Colors.redAccent,
               ),
             ),
-            ...details['Substituições'].map<Widget>((sub) => ListTile(
-                  leading: const Icon(Icons.swap_horiz, color: Colors.redAccent),
-                  title: Text(
-                    sub,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                )),
+            const SizedBox(height: 10),
+            const Text(
+              'Sem substituições disponíveis.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
           ],
         ),
       ),

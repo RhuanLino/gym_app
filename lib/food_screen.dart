@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/services/requests.dart';
 
-class FoodScreen extends StatelessWidget {
-  final List<Map<String, String>> foods = [
-    {'name': 'Banana', 'calories': '74 kcal'},
-    {'name': 'Maçã', 'calories': '45 kcal'},
-    {'name': 'Melancia', 'calories': '89 kcal'},
-    {'name': 'Açaí', 'calories': '116 kcal'},
-    {'name': 'Ovo Cozido', 'calories': '68 kcal'},
-    {'name': 'Pão Integral', 'calories': '69 kcal por fatia'},
-    {'name': 'Arroz Integral', 'calories': '110 kcal por porção'},
-    {'name': 'Feijão Preto', 'calories': '77 kcal por porção'},
-    {'name': 'Frango Grelhado', 'calories': '165 kcal por 100g'},
-    {'name': 'Batata Doce', 'calories': '86 kcal por 100g'},
-    {'name': 'Peixe (Tilápia)', 'calories': '129 kcal por 100g'},
-    {'name': 'Iogurte Natural', 'calories': '59 kcal por 100g'},
-    {'name': 'Granola', 'calories': '471 kcal por 100g'},
-    {'name': 'Abacaxi', 'calories': '50 kcal por 100g'},
-    {'name': 'Amêndoas', 'calories': '576 kcal por 100g'},
-  ];
+class FoodScreen extends StatefulWidget {
+  const FoodScreen({super.key});
 
-  FoodScreen({super.key});
+  @override
+  _FoodScreenState createState() => _FoodScreenState();
+}
+
+class _FoodScreenState extends State<FoodScreen> {
+  late Future<List<Map<String, dynamic>>> _alimentos;
+
+  @override
+  void initState() {
+    super.initState();
+    _alimentos = getAlimentos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +26,46 @@ class FoodScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: foods.length,
-          itemBuilder: (context, index) {
-            final food = foods[index];
-            return Card(
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: ListTile(
-                leading: const Icon(Icons.fastfood, color: Colors.redAccent),
-                title: Text(
-                  food['name']!,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _alimentos,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Exibe um indicador de carregamento enquanto os dados são buscados
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              // Exibe uma mensagem de erro caso ocorra algum problema
+              return Center(
+                child: Text(
+                  'Erro ao carregar alimentos: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red),
                 ),
-                subtitle: Text('Calorias: ${food['calories']}'),
-              ),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              // Exibe uma mensagem caso não haja dados
+              return const Center(
+                child: Text('Nenhum alimento encontrado.'),
+              );
+            }
+
+            // Exibe os dados quando disponíveis
+            final alimentos = snapshot.data!;
+            return ListView.builder(
+              itemCount: alimentos.length,
+              itemBuilder: (context, index) {
+                final food = alimentos[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: ListTile(
+                    leading: const Icon(Icons.fastfood, color: Colors.redAccent),
+                    title: Text(
+                      food['nome'] ?? 'Desconhecido',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('${food['kcal'] ?? 'N/A'} Kcal'),
+                  ),
+                );
+              },
             );
           },
         ),
